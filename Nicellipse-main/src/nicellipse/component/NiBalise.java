@@ -3,14 +3,14 @@ package nicellipse.component;
 import java.awt.Dimension;
 import java.util.ArrayList;
 
-import javax.swing.JPanel;
 
-public class NiBalise extends JPanel implements NiBorderedComponent {
+public class NiBalise extends NiEllipse {
     private static final long serialVersionUID = 128422045550852289L;
 
     public int tailleMax ;
     public ArrayList<String> memoire = null;
     public boolean memoireFull = false;
+    public String name ;
 
     public NiBalise(int tailleMax) {
         this.defaultSetup();
@@ -23,13 +23,14 @@ public class NiBalise extends JPanel implements NiBorderedComponent {
     public boolean isFull(){
         return memoireFull;
     }
-    public void setStatutMemoire (boolean statut){
-        this.memoireFull = statut ;
-    }
-    public ArrayList<String> getMemoire(){
-        return this.getMemoire();
-    }
     public void addToMemoire(String donnees){
         this.memoire.add(donnees);
+        if(this.memoire.size() == tailleMax){
+            this.memoireFull = true;
+        }
+    }
+    public void transfertMemoire(){
+        this.memoire = new ArrayList<>();
+        this.memoireFull = false;
     }
 }
