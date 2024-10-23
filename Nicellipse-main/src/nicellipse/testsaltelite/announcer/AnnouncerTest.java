@@ -56,7 +56,7 @@ public class AnnouncerTest {
 	}
 	
 	@Test
-	public void test1() {
+	public void test1() throws InterruptedException {
 		Balise.log.clear();
 		Announcer announcer = new Announcer();
 		Balise b = new Balise();
@@ -68,7 +68,7 @@ public class AnnouncerTest {
 	}
 	@Test
 	
-	public void test2() {
+	public void test2() throws InterruptedException {
 		Balise.log.clear();
 		Announcer announcer = new Announcer();
 		Balise b = new Balise();

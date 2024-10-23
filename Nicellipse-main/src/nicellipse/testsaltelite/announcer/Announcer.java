@@ -33,7 +33,7 @@ public class Announcer {
 		}
 	}
 	
-	public void announce(AbstractEvent anEvent) {
+	public void announce(AbstractEvent anEvent) throws InterruptedException {
 		Class<?> eventClass = anEvent.getClass();
 		List<Object> l = registrationIndex.get(eventClass);
 		if (l == null) return;

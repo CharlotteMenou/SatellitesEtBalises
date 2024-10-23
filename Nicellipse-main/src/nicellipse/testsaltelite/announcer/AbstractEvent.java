@@ -8,5 +8,5 @@ public abstract class AbstractEvent extends EventObject {
 	public AbstractEvent(Object source) {
 		super(source);
 	}
-	public void sentTo(Object target) {}
+	public void sentTo(Object target) throws InterruptedException {}
 }

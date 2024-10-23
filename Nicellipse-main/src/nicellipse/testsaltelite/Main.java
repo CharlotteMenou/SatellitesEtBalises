@@ -1,6 +1,8 @@
 import nicellipse.component.NiRectangle;
 import nicellipse.component.NiSpace;
+import nicellipse.testsaltelite.MobiBalise;
 import nicellipse.testsaltelite.MobiSatelite;
+import nicellipse.testsaltelite.MobiViewBalise;
 import nicellipse.testsaltelite.MobiViewSatelite;
 
 import javax.swing.*;
@@ -18,38 +20,42 @@ public static void main (String[]args){
         mobi1.configureToMoveToRight();
         MobiViewSatelite mobiV1 = new MobiViewSatelite(mobi1);
 
-        MobiSatelite mobi2 = new MobiSatelite(0, 100);
-        mobi2.configureToMoveToLeft();
-        MobiViewSatelite mobiV2 = new MobiViewSatelite(mobi2);
+        MobiBalise mobi2 = new MobiBalise(0, 100,1);
+        MobiViewBalise mobiV2 = new MobiViewBalise(mobi2);
 
-        MobiSatelite mobi3 = new MobiSatelite(0, 150);
-        mobi3.configureToMoveToLeft();
-        MobiViewSatelite mobiV3 = new MobiViewSatelite(mobi3);
+        MobiBalise mobi3 = new MobiBalise(0, 150,0);
+        MobiViewBalise mobiV3 = new MobiViewBalise(mobi3);
 
+        /*
         MobiSatelite mobi4 = new MobiSatelite(0, 250);
         mobi4.configureToMoveToLeft();
         MobiViewSatelite mobiV4 = new MobiViewSatelite(mobi4);
 
         MobiSatelite mobi5 = new MobiSatelite(0, 300);
         mobi5.configureToMoveToRight();
-        MobiViewSatelite mobiV5 = new MobiViewSatelite(mobi5);
+        MobiViewSatelite mobiV5 = new MobiViewSatelite(mobi5);*/
 
         container.add(mobiV1);
         container.add(mobiV2);
         container.add(mobiV3);
-        container.add(mobiV4);
-        container.add(mobiV5);
+        //container.add(mobiV4);
+        //container.add(mobiV5);
 
         space.openInWindow();
 
         while (true) {
             final Runnable doit = new Runnable() {
                 public void run() {
-                    mobi1.moveBy(2);
-                    mobi2.moveBy(5);
-                    mobi3.moveBy(8);
-                    mobi4.moveBy(10);
-                    mobi5.moveBy(10);
+                    try {
+                        mobi1.moveBy(2);
+                        mobi2.moveBy(5);
+                        mobi3.moveBy(8);
+                        //mobi4.moveBy(10);
+                        //mobi5.moveBy(10);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+
                     try {
                         Thread.sleep(2);
                     } catch (InterruptedException e) {

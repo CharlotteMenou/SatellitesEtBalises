@@ -10,7 +10,7 @@ public class MobiMoveEvent extends AbstractEvent {
 		super(source);
 	}
 
-	public void sentTo(Object o) {
+	public void sentTo(Object o) throws InterruptedException {
 		((MobiListener)o).mobiMoveEvent(this);
 	}
 

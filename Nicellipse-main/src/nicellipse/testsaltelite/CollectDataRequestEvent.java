@@ -12,7 +12,7 @@ public class CollectDataRequestEvent extends AbstractEvent {
 	private static final long serialVersionUID = 2196828859112483898L;
 
 	@Override
-	public void sentTo(Object o) {
+	public void sentTo(Object o) throws InterruptedException {
 		((MobiListener)o).mobiCollectDataRequestEvent(this);
 	}
 

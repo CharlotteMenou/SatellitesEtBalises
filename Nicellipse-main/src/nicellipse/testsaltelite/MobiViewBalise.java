@@ -15,8 +15,11 @@ public class MobiViewBalise extends NiRectangle implements MobiListener {
 	private MobiBalise model;
 	private Announcer announcer;
 
+	private boolean movingRight = true; // Direction horizontale
+	private boolean movingDown = true;  // Direction verticale
+
 	public MobiViewBalise(MobiBalise model) {
-		this.color = Color.red;
+		this.color = Color.black;
 		this.handCheckCount = 0;
 		this.announcer = new Announcer();
 		this.model = model;
@@ -31,16 +34,37 @@ public class MobiViewBalise extends NiRectangle implements MobiListener {
 	}
 
 	@Override
-	public void mobiMoveEvent(MobiMoveEvent evt) {
-		MobiSatelite src = (MobiSatelite) evt.getSource();
+	public void mobiMoveEvent(MobiMoveEvent evt) throws InterruptedException {
+		// Récupérer les coordonnées du modèle
+		MobiBalise src = (MobiBalise) evt.getSource();
 
-		int x = src.getX();
-		if (x > 0) {
-			this.setLocation((x % this.getParent().getWidth()), src.getY());
-		} else {
-			this.setLocation(this.getParent().getWidth() - (Math.abs(x) % this.getParent().getWidth()), src.getY());
+		switch (model.getModeDeplacement()) {
+			case 1:  // Déplacement horizontal (droite-gauche)
+				int x = src.getX();
+				if (x > 0) {
+					// Si `x` est positif, on reste dans les limites de la largeur du parent
+					this.setLocation((x % this.getParent().getWidth()), src.getY());
+				} else {
+					// Si `x` est négatif, on doit "rebondir" sur le bord gauche
+					this.setLocation(this.getParent().getWidth() - (Math.abs(x) % this.getParent().getWidth()), src.getY());
+				}
+				break;
+
+			case 0:  // Déplacement vertical (haut-bas)
+				int y = src.getY();
+				if (y > 0) {
+					// Si `y` est positif, on reste dans les limites de la hauteur du parent
+					this.setLocation(src.getX(), (y % this.getParent().getHeight()));
+				} else {
+					// Si `y` est négatif, on doit "rebondir" sur le bord supérieur
+					this.setLocation(src.getX(), this.getParent().getHeight() - (Math.abs(y) % this.getParent().getHeight()));
+				}
+				break;
 		}
-		this.announcer.announce(new CollectDataRequestEvent(this));
+
+
+
+        this.announcer.announce(new MobiMoveEvent(this));  // Annonce d'un événement de collecte de données
 	}
 
 	@Override
@@ -54,4 +78,6 @@ public class MobiViewBalise extends NiRectangle implements MobiListener {
 			}
 		}
 	}
+
+
 }

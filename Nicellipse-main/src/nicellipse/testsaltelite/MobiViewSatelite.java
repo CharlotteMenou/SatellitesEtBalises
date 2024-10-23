@@ -1,5 +1,6 @@
 package nicellipse.testsaltelite;
 
+import nicellipse.component.NiBalise;
 import nicellipse.component.NiRectangle;
 import nicellipse.testsaltelite.announcer.AbstractEvent;
 import nicellipse.testsaltelite.announcer.Announcer;
@@ -9,14 +10,13 @@ import java.awt.*;
 public class MobiViewSatelite extends NiRectangle implements MobiListener {
 	private static final long serialVersionUID = -8719870900105867735L;
 	final Integer handCheckGap = 20;
-	final Integer maxHandChecks = 1000;
 	Integer handCheckCount;
 	Color color;
 	private MobiSatelite model;
 	private Announcer announcer;
 
 	public MobiViewSatelite(MobiSatelite model) {
-		this.color = Color.red;
+		this.color = Color.YELLOW;
 		this.handCheckCount = 0;
 		this.announcer = new Announcer();
 		this.model = model;
@@ -31,7 +31,7 @@ public class MobiViewSatelite extends NiRectangle implements MobiListener {
 	}
 
 	@Override
-	public void mobiMoveEvent(MobiMoveEvent evt) {
+	public void mobiMoveEvent(MobiMoveEvent evt) throws InterruptedException {
 		MobiSatelite src = (MobiSatelite) evt.getSource();
 
 		int x = src.getX();
@@ -44,10 +44,11 @@ public class MobiViewSatelite extends NiRectangle implements MobiListener {
 	}
 
 	@Override
-	public void mobiCollectDataRequestEvent(CollectDataRequestEvent evt) {
+	public void mobiCollectDataRequestEvent(CollectDataRequestEvent evt) throws InterruptedException {
 		MobiViewSatelite mv = (MobiViewSatelite) evt.getSource();
 		if ((this.getLocation().x >= (mv.getLocation().x - handCheckGap)
 				&& (this.getLocation().x <= (mv.getLocation().x + this.getWidth() + handCheckGap)))) {
+			Thread.sleep(1000);
 			mv.unregister(this, CollectDataRequestEvent.class);
 		}
 	}

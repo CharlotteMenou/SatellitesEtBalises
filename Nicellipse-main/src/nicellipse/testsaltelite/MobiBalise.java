@@ -7,13 +7,19 @@ public class MobiBalise {
 	private Announcer announcer;
 	private int x;
 	private int y;
-	private Integer dir;
 	private String[] donnee;
 	private Integer indice;
 	private Boolean memoryFull ;
+	private int modeDeplacement;
 
-	public MobiBalise(int x, int y) {
-		this.announcer = new Announcer();
+	public int getModeDeplacement() {
+		return modeDeplacement;
+	}
+
+
+	public MobiBalise(int x, int y, int modeDeplacement) {
+        this.modeDeplacement = modeDeplacement;
+        this.announcer = new Announcer();
 		this.x = x;
 		this.y = y;
 		this.donnee =  new String[25];
@@ -21,7 +27,7 @@ public class MobiBalise {
 		this.memoryFull = false;
 	}
 
-	void moveTo(int x, int y) {
+	void moveTo(int x, int y) throws InterruptedException {
 		this.x = x;
 		this.y = y;
 		this.announcer.announce(new MobiMoveEvent(this));
@@ -39,16 +45,9 @@ public class MobiBalise {
 		return this.y;
 	}
 
-	public void configureToMoveToLeft() {
-		this.dir = -1;
-	}
 
-	public void configureToMoveToRight() {
-		this.dir = 1;
-	}
-
-	public void moveBy(int gap) {
-		this.moveTo(this.x + (dir * gap), this.y);
+	public void moveBy(int gap) throws InterruptedException {
+		this.moveTo(this.x + (gap), this.y);
 	}
 
 	public void sendData(){this.donnee = new String[25]; this.indice=0; this.memoryFull=false;}
