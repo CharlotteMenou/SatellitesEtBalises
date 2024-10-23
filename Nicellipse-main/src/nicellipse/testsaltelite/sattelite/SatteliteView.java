@@ -1,27 +1,22 @@
-package nicellipse.testsaltelite;
-
-import java.awt.Color;
-import java.awt.Dimension;
-import java.lang.reflect.InvocationTargetException;
-
-import javax.swing.SwingUtilities;
+package nicellipse.testsaltelite.sattelite;
 
 import nicellipse.component.NiRectangle;
-import nicellipse.component.NiSpace;
+import nicellipse.testsaltelite.*;
 import nicellipse.testsaltelite.announcer.AbstractEvent;
 import nicellipse.testsaltelite.announcer.Announcer;
-import nicellipse.testsaltelite.sattelite.SatteliteView;
 
-public class MobiView extends NiRectangle implements MobiListener {
+import java.awt.*;
+
+public class SatteliteView extends NiRectangle implements MobiListener {
     private static final long serialVersionUID = -8719870900105867735L;
     final Integer handCheckGap = 20;
     final Integer maxHandChecks = 1000;
     Integer handCheckCount;
     Color color;
-    private Mobi model;
+    private SatteliteModel model;
     private Announcer announcer;
 
-    public MobiView(Mobi model) {
+    public SatteliteView(SatteliteModel model) {
         this.color = Color.red;
         this.handCheckCount = 0;
         this.announcer = new Announcer();
@@ -32,18 +27,18 @@ public class MobiView extends NiRectangle implements MobiListener {
         this.setLocation(model.getX(), model.getY());
     }
 
-    public void registerForHandCheck(SatteliteView v) {
+    public void registerForHandCheck(MobiView v) {
         this.announcer.register(v, MobiHandCheckRequestEvent.class);
     }
 
-    private void unregister(MobiView mobiView, Class<? extends AbstractEvent> cls) {
-        this.announcer.unregister(mobiView, cls);
+    private void unregister(SatteliteView satteliteView, Class<? extends AbstractEvent> cls) {
+        this.announcer.unregister(satteliteView, cls);
 
     }
 
     @Override
     public void mobiMoveEvent(MobiMoveEvent evt) {
-        Mobi src = (Mobi) evt.getSource();
+        SatteliteModel src = (SatteliteModel) evt.getSource();
 
         int x = src.getX();
         if (x > 0) {
@@ -56,7 +51,7 @@ public class MobiView extends NiRectangle implements MobiListener {
 
     @Override
     public void mobiHandCheckRequestEvent(MobiHandCheckRequestEvent evt) {
-        MobiView mv = (MobiView) evt.getSource();
+        /*SatteliteView mv = (SatteliteView) evt.getSource();
         if ((this.getLocation().x >= (mv.getLocation().x - handCheckGap)
                 && (this.getLocation().x <= (mv.getLocation().x + this.getWidth() + handCheckGap)))) {
             this.handCheckCount++;
@@ -70,6 +65,12 @@ public class MobiView extends NiRectangle implements MobiListener {
         } else {
             this.setBackground(this.color);
             mv.setBackground(this.color);
-        }
+        }*/
+    }
+    
+    public void onSatteliteMove(SatteliteMoveEvent event) {
+        SatteliteModel model = (SatteliteModel) event.getSource();
+        this.setLocation(model.getX(), model.getY());
+        this.repaint();
     }
 }
