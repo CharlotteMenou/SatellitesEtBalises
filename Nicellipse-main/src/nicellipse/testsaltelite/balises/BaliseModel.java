@@ -68,7 +68,7 @@ public class BaliseModel {
 
     private void moveHorizontal() {
         if (movingRight) {
-            if (this.x < this.maxWidth) {
+            if (this.x < this.maxWidth - 20) {
                 this.x += 1;
             } else {
                 movingRight = false;
@@ -86,7 +86,7 @@ public class BaliseModel {
 
     private void moveVertical() {
         if (movingDown) {
-            if (this.y < this.maxHeight) {
+            if (this.y < this.maxHeight - 20) {
                 this.y += 1;
             } else {
                 movingDown = false;
@@ -110,16 +110,18 @@ public class BaliseModel {
             this.x -= 1; // Avance vers la gauche
         }
 
-        // Mouvement sinusoïdal léger en Y
-        // Utiliser un angle pour créer une oscillation verticale (sinus)
-        double angle = (double) this.x / 50;  // Ajuste la vitesse de l'oscillation
-        this.y = (int) (maxHeight / 2 + 30 * Math.sin(angle)); // 30 est l'amplitude du mouvement vertical
+        // Ajuster l'angle pour des pointes plus nettes
+        double angle = (double) this.x / 10;  // Augmenter la fréquence (réduire la longueur d'onde)
+
+        // Réduire l'amplitude pour des courbes moins hautes
+        this.y = (int) (maxHeight / 2 + 10 * Math.signum(Math.sin(angle))); // 10 est l'amplitude avec des pointes plus nettes
 
         // Inverser la direction horizontale uniquement si on atteint les bords horizontaux
-        if (this.x >= this.maxWidth || this.x <= 0) {
+        if (this.x >= this.maxWidth - 20|| this.x <= 0) {
             movingRight = !movingRight;
         }
     }
+
 
 
 
