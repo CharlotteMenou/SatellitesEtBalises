@@ -68,7 +68,7 @@ public class BaliseModel {
                     moveVertical();
                     break;
                 case 2:
-                    //moveZigzag();
+                    moveZigzag();
                     break;
             }
         } else {
