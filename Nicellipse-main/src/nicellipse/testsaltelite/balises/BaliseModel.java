@@ -15,8 +15,6 @@ public class BaliseModel {
     private boolean movingDown = true;
     private Random random;
     private int moveType; // 0 = horizontal, 1 = vertical, 2 = zigzag
-    private int moveDuration; // Duration for which a movement type is maintained
-    private int currentMoveTime; // Counter for the current move duration
 
     BaliseModel(int x, int y, int garbage, int maxWidth, int maxHeight) {
         this.x = x;
@@ -26,9 +24,7 @@ public class BaliseModel {
         this.maxHeight = maxHeight;
         this.announcer = new Announcer();
         this.random = new Random();
-        this.moveType = random.nextInt(3); // Initial random movement type
-        this.moveDuration = random.nextInt(50) + 500; // Random duration between 50 and 100 cycles
-        this.currentMoveTime = 0; // Initial cycle count
+        this.moveType = random.nextInt(3); // Type de mouvement fixé une fois : 0: Horizontal, 1: Vertical, 2: Zigzag
     }
 
     void register(Object o) {
@@ -49,17 +45,7 @@ public class BaliseModel {
 
     public void move() {
         if (this.garbage < 100) {
-            // Vérifier si la durée actuelle de mouvement est terminée
-            if (currentMoveTime >= moveDuration) {
-                // Changer de type de mouvement aléatoirement après la période
-                this.moveType = random.nextInt(3); // 0: Horizontal, 1: Vertical, 2: Zigzag
-                this.moveDuration = random.nextInt(50) + 50; // Nouvelle durée aléatoire entre 50 et 100
-                currentMoveTime = 0; // Réinitialiser le compteur de temps
-            } else {
-                currentMoveTime++; // Incrémenter le compteur de temps
-            }
-
-            // Exécuter le type de mouvement courant
+            // Exécuter le type de mouvement fixé
             switch (this.moveType) {
                 case 0:
                     moveHorizontal();
@@ -117,26 +103,25 @@ public class BaliseModel {
     }
 
     private void moveZigzag() {
+        // Mouvement horizontal dans une seule direction
         if (movingRight) {
-            this.x += 1;
+            this.x += 1; // Avance vers la droite
         } else {
-            this.x -= 1;
+            this.x -= 1; // Avance vers la gauche
         }
 
-        if (movingDown) {
-            this.y += 1;
-        } else {
-            this.y -= 1;
-        }
+        // Mouvement sinusoïdal léger en Y
+        // Utiliser un angle pour créer une oscillation verticale (sinus)
+        double angle = (double) this.x / 50;  // Ajuste la vitesse de l'oscillation
+        this.y = (int) (maxHeight / 2 + 30 * Math.sin(angle)); // 30 est l'amplitude du mouvement vertical
 
-        // Inverser la direction quand on atteint les limites
+        // Inverser la direction horizontale uniquement si on atteint les bords horizontaux
         if (this.x >= this.maxWidth || this.x <= 0) {
             movingRight = !movingRight;
         }
-        if (this.y >= this.maxHeight || this.y <= 0) {
-            movingDown = !movingDown;
-        }
     }
+
+
 
     private void moveToSurface() {
         // Mouvement vers y = 0 lorsque la mémoire est pleine
