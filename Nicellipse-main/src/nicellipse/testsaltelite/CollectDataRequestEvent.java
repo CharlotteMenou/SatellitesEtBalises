@@ -3,9 +3,9 @@ package nicellipse.testsaltelite;
 
 import nicellipse.testsaltelite.announcer.AbstractEvent;
 
-public class MobiHandCheckRequestEvent extends AbstractEvent {
+public class CollectDataRequestEvent extends AbstractEvent {
 	
-	public MobiHandCheckRequestEvent(Object source) {
+	public CollectDataRequestEvent(Object source) {
 		super(source);
 	}
 	
@@ -13,7 +13,7 @@ public class MobiHandCheckRequestEvent extends AbstractEvent {
 
 	@Override
 	public void sentTo(Object o) {
-		((MobiListener)o).mobiHandCheckRequestEvent(this);
+		((MobiListener)o).mobiCollectDataRequestEvent(this);
 	}
 
 }

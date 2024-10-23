@@ -3,16 +3,22 @@ package nicellipse.testsaltelite;
 
 import nicellipse.testsaltelite.announcer.Announcer;
 
-public class Mobi {
+public class MobiBalise {
 	private Announcer announcer;
 	private int x;
 	private int y;
 	private Integer dir;
+	private String[] donnee;
+	private Integer indice;
+	private Boolean memoryFull ;
 
-	public Mobi(int x, int y) {
+	public MobiBalise(int x, int y) {
 		this.announcer = new Announcer();
 		this.x = x;
 		this.y = y;
+		this.donnee =  new String[25];
+		this.indice = 0;
+		this.memoryFull = false;
 	}
 
 	void moveTo(int x, int y) {
@@ -44,5 +50,19 @@ public class Mobi {
 	public void moveBy(int gap) {
 		this.moveTo(this.x + (dir * gap), this.y);
 	}
+
+	public void sendData(){this.donnee = new String[25]; this.indice=0; this.memoryFull=false;}
+
+	public void collectData(String data) {
+		if (this.memoryFull) {
+			this.donnee[indice] = data;
+			indice = indice++;
+		}
+		if (indice > 24) {
+			memoryFull = true;
+		}
+	}
+
+	public boolean isFull(){return this.memoryFull;}
 
 }
