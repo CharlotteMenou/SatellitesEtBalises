@@ -9,8 +9,8 @@ public class BaliseView extends JPanel {
     public BaliseView(BaliseModel model) {
         this.model = model;
         this.model.register(this);
-        this.setSize(6, 6);
-        this.setBackground(Color.red);
+        this.setSize(10, 10);
+        this.setBackground(Color.yellow);
         this.setLocation(model.getX(), model.getY());
     }
 

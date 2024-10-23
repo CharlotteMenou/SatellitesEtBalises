@@ -16,7 +16,7 @@ public class BaliseModel {
     private Random random;
     private int moveType; // 0 = horizontal, 1 = vertical, 2 = zigzag
 
-    BaliseModel(int x, int y, int garbage, int maxWidth, int maxHeight) {
+    public BaliseModel(int x, int y, int garbage, int maxWidth, int maxHeight) {
         this.x = x;
         this.y = y;
         this.garbage = garbage;
