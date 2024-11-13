@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 public class Test {
     public static void main(String[] args) {
         NiSpace space = new NiSpace("Mobi 1", new Dimension(400, 400));
+
         // Partie blanche
         NiRectangle topContainer = new NiRectangle();
         topContainer.setBackground(Color.white);
@@ -27,9 +28,13 @@ public class Test {
         bottomContainer.setLocation(0, 200);
         space.add(bottomContainer);
 
+        // declare 4 sattelites
         SatteliteModel satellite1 = new SatteliteModel(0, 20);
         satellite1.configureToMoveToRight();
-
+        SatteliteModel satellite2 = new SatteliteModel(40, 40);
+        satellite2.configureToMoveToRight();
+        SatteliteModel satellite3 = new SatteliteModel(50, 60);
+        satellite3.configureToMoveToRight();
 
         // Create 4 balises model with 4 random positions limited in height and width of the container
         BaliseModel baliseModel1 = new BaliseModel((int) (Math.random() * 400), (int) (Math.random() * 400), 0, 400, 200);
@@ -49,10 +54,41 @@ public class Test {
         bottomContainer.add(baliseView3);
         bottomContainer.add(baliseView4);
 
-        // initiate sattelite
-        SatteliteView satelliteV2 = new SatteliteView(satellite1, baliseView1);
+        // initiate all sattelite views
+        SatteliteView satelliteV1 = new SatteliteView(satellite1);
+        SatteliteView satelliteV2 = new SatteliteView(satellite2);
+        SatteliteView satelliteV3 = new SatteliteView(satellite3);
 
+        // register all balises to all sattelites
+        satelliteV1.registerAll(new java.util.ArrayList<BaliseView>() {
+            {
+                add(baliseView1);
+                add(baliseView2);
+                add(baliseView3);
+                add(baliseView4);
+            }
+        });
+        satelliteV2.registerAll(new java.util.ArrayList<BaliseView>() {
+            {
+                add(baliseView1);
+                add(baliseView2);
+                add(baliseView3);
+                add(baliseView4);
+            }
+        });
+        satelliteV3.registerAll(new java.util.ArrayList<BaliseView>() {
+            {
+                add(baliseView1);
+                add(baliseView2);
+                add(baliseView3);
+                add(baliseView4);
+            }
+        });
+
+        // Add sattelites to the top container
+        topContainer.add(satelliteV1);
         topContainer.add(satelliteV2);
+        topContainer.add(satelliteV3);
 
         space.openInWindow();
 
@@ -60,6 +96,8 @@ public class Test {
             final Runnable doit = new Runnable() {
                 public void run() {
                     satellite1.moveBy(1);
+                    satellite2.moveBy(1);
+                    satellite3.moveBy(1);
                     baliseModel1.move();
                     baliseModel2.move();
                     baliseModel3.move();

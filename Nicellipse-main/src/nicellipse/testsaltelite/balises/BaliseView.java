@@ -11,6 +11,7 @@ public class BaliseView extends JPanel {
 
     // additional attributes
     private boolean isOnTop = false;
+    private boolean isFree = true;
 
 
     public BaliseView(BaliseModel model) {
@@ -47,5 +48,12 @@ public class BaliseView extends JPanel {
 
     public boolean isOnTop() {
         return this.isOnTop;
+    }
+
+    public boolean isFree() {
+        return this.isFree;
+    }
+    public void setFree(boolean isFree) {
+        this.isFree = isFree;
     }
 }
