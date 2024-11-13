@@ -14,7 +14,9 @@ public class BaliseModel {
     private boolean movingRight = true;
     private boolean movingDown = true;
     private Random random;
+    private double currentAngle = 0.0;
     private int moveType; // 0 = horizontal, 1 = vertical, 2 = zigzag
+    private int amplitudeMouvement ;
 
     public BaliseModel(int x, int y, int garbage, int maxWidth, int maxHeight) {
         this.x = x;
@@ -25,6 +27,7 @@ public class BaliseModel {
         this.announcer = new Announcer();
         this.random = new Random();
         this.moveType = random.nextInt(3); // Type de mouvement fixé une fois : 0: Horizontal, 1: Vertical, 2: Zigzag
+        this.amplitudeMouvement = random.nextInt(50);
     }
 
     void register(Object o) {
@@ -110,31 +113,22 @@ public class BaliseModel {
             this.x -= 1; // Avance vers la gauche
         }
 
-        // Ajuster l'angle pour des pointes plus nettes
-        double angle = (double) this.x / 10;  // Augmenter la fréquence (réduire la longueur d'onde)
+        // Incrément de l'angle pour la progression continue de la sinusoïde
+        currentAngle += 0.1;  // Ajustez l'incrément pour contrôler la vitesse de l'oscillation verticale
 
-        // Réduire l'amplitude pour des courbes moins hautes
-        this.y = (int) (maxHeight / 2 + 10 * Math.signum(Math.sin(angle))); // 10 est l'amplitude avec des pointes plus nettes
+        // Calcul de la position en Y en utilisant une sinusoïde continue
+        this.y = (int) (maxHeight / 2 + amplitudeMouvement * Math.sin(currentAngle)); // 10 est l'amplitude
 
         // Inverser la direction horizontale uniquement si on atteint les bords horizontaux
-        if (this.x >= this.maxWidth - 20|| this.x <= 0) {
+        if (this.x >= this.maxWidth - 20 || this.x <= 0) {
             movingRight = !movingRight;
         }
     }
-
-
-
 
     private void moveToSurface() {
         // Mouvement vers y = 0 lorsque la mémoire est pleine
         if (this.y > 0) {
             this.y -= 1;
         }
-    }
-
-    public void moveTo(int x, int y) {
-        this.x = x;
-        this.y = y;
-        this.announcer.announce(new MoveBaliseEvent(this));
     }
 }
