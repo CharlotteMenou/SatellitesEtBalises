@@ -8,14 +8,14 @@ public class BaliseModel {
     private int x;
     private int y;
     private int garbage;
-    private int maxWidth;
-    private int maxHeight;
-    private Announcer announcer;
+    private final int maxWidth;
+    private final int maxHeight;
+    private final Announcer announcer;
     private boolean movingRight = true;
     private boolean movingDown = true;
-    private Random random;
-    private int moveType; // 0 = horizontal, 1 = vertical, 2 = zigzag
-
+    private final Random random;
+    private final int moveType; // 0 = horizontal, 1 = vertical, 2 = zigzag
+    private final int garbageLimit;
     public BaliseModel(int x, int y, int garbage, int maxWidth, int maxHeight) {
         this.x = x;
         this.y = y;
@@ -25,6 +25,7 @@ public class BaliseModel {
         this.announcer = new Announcer();
         this.random = new Random();
         this.moveType = random.nextInt(3); // Type de mouvement fixé une fois : 0: Horizontal, 1: Vertical, 2: Zigzag
+        this.garbageLimit  = random.nextInt(100,150); // Limite de mémoire aléatoire entre 450 et 500
     }
 
     void register(Object o) {
@@ -40,11 +41,12 @@ public class BaliseModel {
     }
 
     public void collectGarbage() {
-        this.garbage += 1;
+        // add a random number between 0 and 2 to garbage
+        this.garbage += random.nextInt(3);
     }
 
     public void move() {
-        if (this.garbage < 100) {
+        if (this.garbage < this.garbageLimit) {
             // Exécuter le type de mouvement fixé
             switch (this.moveType) {
                 case 0:
@@ -82,6 +84,8 @@ public class BaliseModel {
                 this.x += 1;
             }
         }
+        // collect garbage
+        collectGarbage();
     }
 
     private void moveVertical() {
@@ -100,6 +104,8 @@ public class BaliseModel {
                 this.y += 1;
             }
         }
+        // collect garbage
+        collectGarbage();
     }
 
     private void moveZigzag() {
@@ -114,12 +120,14 @@ public class BaliseModel {
         double angle = (double) this.x / 10;  // Augmenter la fréquence (réduire la longueur d'onde)
 
         // Réduire l'amplitude pour des courbes moins hautes
-        this.y = (int) (maxHeight / 2 + 10 * Math.signum(Math.sin(angle))); // 10 est l'amplitude avec des pointes plus nettes
+        this.y = (int) ((double) maxHeight / 2 + 10 * Math.signum(Math.sin(angle))); // 10 est l'amplitude avec des pointes plus nettes
 
         // Inverser la direction horizontale uniquement si on atteint les bords horizontaux
         if (this.x >= this.maxWidth - 20|| this.x <= 0) {
             movingRight = !movingRight;
         }
+        // collect garbage
+        collectGarbage();
     }
 
 
@@ -132,9 +140,4 @@ public class BaliseModel {
         }
     }
 
-    public void moveTo(int x, int y) {
-        this.x = x;
-        this.y = y;
-        this.announcer.announce(new MoveBaliseEvent(this));
-    }
 }

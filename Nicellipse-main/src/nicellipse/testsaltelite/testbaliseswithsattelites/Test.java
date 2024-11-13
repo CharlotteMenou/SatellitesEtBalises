@@ -29,7 +29,7 @@ public class Test {
 
         SatteliteModel satellite1 = new SatteliteModel(0, 20);
         satellite1.configureToMoveToRight();
-        SatteliteView satelliteV2 = new SatteliteView(satellite1);
+
 
         // Create 4 balises model with 4 random positions limited in height and width of the container
         BaliseModel baliseModel1 = new BaliseModel((int) (Math.random() * 400), (int) (Math.random() * 400), 0, 400, 200);
@@ -49,6 +49,8 @@ public class Test {
         bottomContainer.add(baliseView3);
         bottomContainer.add(baliseView4);
 
+        // initiate sattelite
+        SatteliteView satelliteV2 = new SatteliteView(satellite1, baliseView1);
 
         topContainer.add(satelliteV2);
 
@@ -57,7 +59,7 @@ public class Test {
         while (true) {
             final Runnable doit = new Runnable() {
                 public void run() {
-                    satellite1.moveBy(2);
+                    satellite1.moveBy(1);
                     baliseModel1.move();
                     baliseModel2.move();
                     baliseModel3.move();
