@@ -1,7 +1,7 @@
 package nicellipse.testsaltelite.sattelite;
 
 import nicellipse.component.NiRectangle;
-import nicellipse.testsaltelite.balises.BaliseView;
+import nicellipse.testsaltelite.balises.BaliseModel;
 import nicellipse.testsaltelite.balises.ListenToSatteliteEvent;
 
 import java.awt.*;
@@ -12,10 +12,10 @@ public class SatteliteView extends NiRectangle {
     Integer handCheckCount;
     Color color;
     private SatteliteModel model;
-    private BaliseView baliseView;
-    private ArrayList<BaliseView> baliseViews = new ArrayList<>();
+    private BaliseModel balise;
+    private ArrayList<BaliseModel> balises = new ArrayList<>();
+    private boolean isConnected = false;
     // dont move attribute
-    private boolean dontMove = false;
 
     public SatteliteView(SatteliteModel model) {
         this.color = Color.red;
@@ -28,50 +28,68 @@ public class SatteliteView extends NiRectangle {
     }
 
     // add the register method
-    public void registerAll(ArrayList<BaliseView> baliseViews) {
-        for (BaliseView baliseView : baliseViews) {
-            this.baliseViews.add(baliseView);
-            baliseView.register(this);
+    public void registerAll(ArrayList<BaliseModel> balises) {
+
+        for (BaliseModel balise : balises) {
+            this.balises.add(balise);
+            balise.registerSattelite(this);
         }
     }
 
     public void onSatteliteMove(SatteliteMoveEvent event) {
-        if (dontMove) {
-            // set location from baliseview
-            int x = baliseView.getLocation().x % 400;
-            this.setLocation(x, this.getY());
-            this.repaint();
+        SatteliteModel model = (SatteliteModel) event.getSource();
+        // set location of satteliteview : if x is out of range of parent, go back to 0
+        int x = model.getX() % 400;
+        this.setLocation(x, this.getY());
+        if (this.balise != null) {
+           // check the position of the balise if is on range
+            if (this.getLocation().x >= balise.getX() - 10 && this.getLocation().x <= balise.getX() + 10) {
+                this.setBackground(Color.black);
+            } else {
+                this.balise.setFree(true);
+                this.balise = null;
+                this.isConnected = false; // set to false
+                this.setBackground(Color.red);
+            }
         } else {
-            SatteliteModel model = (SatteliteModel) event.getSource();
-            // set location of satteliteview : if x is out of range of parent, go back to 0
-            int x = model.getX() % 400;
-            this.setLocation(x, this.getY());
-            this.repaint();
+            this.isConnected = false; // set to false
+            this.setBackground(Color.red);
         }
+        this.repaint();
+
     }
 
     public void onSatteliteStop(ListenToSatteliteEvent event) {
-        BaliseView baliseView = (BaliseView) event.getSource();
-        if (!dontMove) {
-            if (baliseView.isFree()) {
-                this.baliseView = baliseView;
+        BaliseModel balise = (BaliseModel) event.getSource();
+        if (this.isConnected) {
+            // already connected
+        } else {
+            if (balise.isFree()) {
+                this.balise = balise;
+                this.isConnected = true;
                 // if the sattelite coordinates are in the same range of balise coordinates
-                if (baliseView.isOnTop()) {
-                    if (this.getLocation().x >= baliseView.getLocation().x - 10 && this.getLocation().x <= baliseView.getLocation().x + 10) {
-                        // stop the sattelite
-                        this.dontMove = true;
+                if (balise.isOnTop()) {
+                    if (this.getLocation().x >= balise.getX() - 10 && this.getLocation().x <= balise.getX() + 10) {
                         // set not free
-                        baliseView.setFree(false);
+                        balise.setFree(false);
                         // set background to black
                         this.setBackground(Color.black);
-                        // set location of baliseView
-                        int x = baliseView.getLocation().x % 400;
-                        this.setLocation(x, this.getY());
+                        this.repaint();
+                    } else {
+                        this.isConnected = false;
+                        this.balise.setFree(true);
+                        this.balise = null;
+                        this.setBackground(Color.red);
                         this.repaint();
                     }
+                } else {
+                    this.isConnected = false;
+                    this.balise.setFree(true);
+                    this.balise = null;
+                    this.setBackground(Color.red);
+                    this.repaint();
                 }
             }
         }
     }
-
 }

@@ -31,16 +31,16 @@ public class Test {
         // declare 4 sattelites
         SatteliteModel satellite1 = new SatteliteModel(0, 20);
         satellite1.configureToMoveToRight();
-        SatteliteModel satellite2 = new SatteliteModel(40, 40);
+        SatteliteModel satellite2 = new SatteliteModel(50, 40);
         satellite2.configureToMoveToRight();
-        SatteliteModel satellite3 = new SatteliteModel(50, 60);
+        SatteliteModel satellite3 = new SatteliteModel(160, 60);
         satellite3.configureToMoveToRight();
 
         // Create 4 balises model with 4 random positions limited in height and width of the container
-        BaliseModel baliseModel1 = new BaliseModel((int) (Math.random() * 400), (int) (Math.random() * 400), 0, 400, 200);
-        BaliseModel baliseModel2 = new BaliseModel((int) (Math.random() * 400), (int) (Math.random() * 400), 0, 400, 200);
-        BaliseModel baliseModel3 = new BaliseModel((int) (Math.random() * 400), (int) (Math.random() * 400), 0, 400, 200);
-        BaliseModel baliseModel4 = new BaliseModel((int) (Math.random() * 400), (int) (Math.random() * 400), 0, 400, 200);
+        BaliseModel baliseModel1 = new BaliseModel((int) (Math.random() * 400), (int) (Math.random() * 200), 0, 400, 200);
+        BaliseModel baliseModel2 = new BaliseModel((int) (Math.random() * 400), (int) (Math.random() * 200), 0, 400, 200);
+        BaliseModel baliseModel3 = new BaliseModel((int) (Math.random() * 400), (int) (Math.random() * 200), 0, 400, 200);
+        BaliseModel baliseModel4 = new BaliseModel((int) (Math.random() * 400), (int) (Math.random() * 200), 0, 400, 200);
 
         // Create balise views and register each to its balise model
         BaliseView baliseView1 = new BaliseView(baliseModel1);
@@ -60,28 +60,28 @@ public class Test {
         SatteliteView satelliteV3 = new SatteliteView(satellite3);
 
         // register all balises to all sattelites
-        satelliteV1.registerAll(new java.util.ArrayList<BaliseView>() {
+        satelliteV1.registerAll(new java.util.ArrayList<BaliseModel>() {
             {
-                add(baliseView1);
-                add(baliseView2);
-                add(baliseView3);
-                add(baliseView4);
+                add(baliseModel1);
+                add(baliseModel2);
+                add(baliseModel3);
+                add(baliseModel4);
             }
         });
-        satelliteV2.registerAll(new java.util.ArrayList<BaliseView>() {
+        satelliteV2.registerAll(new java.util.ArrayList<BaliseModel>() {
             {
-                add(baliseView1);
-                add(baliseView2);
-                add(baliseView3);
-                add(baliseView4);
+                add(baliseModel1);
+                add(baliseModel2);
+                add(baliseModel3);
+                add(baliseModel4);
             }
         });
-        satelliteV3.registerAll(new java.util.ArrayList<BaliseView>() {
+        satelliteV3.registerAll(new java.util.ArrayList<BaliseModel>() {
             {
-                add(baliseView1);
-                add(baliseView2);
-                add(baliseView3);
-                add(baliseView4);
+                add(baliseModel1);
+                add(baliseModel2);
+                add(baliseModel3);
+                add(baliseModel4);
             }
         });
 
