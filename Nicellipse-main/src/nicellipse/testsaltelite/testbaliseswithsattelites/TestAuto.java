@@ -9,19 +9,17 @@ import nicellipse.testsaltelite.sattelite.SatteliteView;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 import static nicellipse.testsaltelite.Main.launch;
 
 public class TestAuto {
 
-    static HashMap<String,BaliseModel> balises;
-    static HashMap<String,SatteliteModel> sattelites;
-    static ArrayList<BaliseView> startedB = new ArrayList<BaliseView>();
-    static ArrayList<SatteliteView> startedS = new ArrayList<SatteliteView>();
+    static HashMap<String,BaliseModel> LMbalises;
+    static HashMap<String,SatteliteModel> LMsattelites;
+    static HashMap<String,BaliseView> LVbalises;
+    static HashMap<String,SatteliteView> LVsattelites;
 
     static NiSpace space = new NiSpace("Mobi 1", new Dimension(400, 400));
 
@@ -42,8 +40,10 @@ public class TestAuto {
         bottomContainer.setLocation(0, 200);
         space.add(bottomContainer);
 
-         balises = new HashMap<String,BaliseModel>();
-        sattelites = new HashMap<String,SatteliteModel>();
+         LMbalises = new HashMap<String,BaliseModel>();
+        LMsattelites = new HashMap<String,SatteliteModel>();
+        LVbalises = new HashMap<String,BaliseView>();
+        LVsattelites = new HashMap<String,SatteliteView>();
 
     // Création et configuration du satellite
    /* SatteliteModel satellite1 = new SatteliteModel(0, 20);
@@ -59,11 +59,15 @@ public class TestAuto {
             while (true) {
                 final Runnable doit = new Runnable() {
                     public void run() {
-                        for (SatteliteModel sat : sattelites.values()) {
-                            sat.moveBy(2);
+                        for (SatteliteModel sat : LMsattelites.values()) {
+                            if(sat != null){
+                                sat.moveBy(2);
+                            }
                         }
-                        for (BaliseModel bal : balises.values()) {
-                            bal.move();
+                        for (BaliseModel bal : LMbalises.values()) {
+                            if( bal != null){
+                                bal.move();
+                            }
                         }
                     }
                 };
@@ -87,15 +91,11 @@ public class TestAuto {
         }
     }
 
-
-
     // Méthode pour interpréter la ligne d'entrée du terminal
     public static void interpret(String line) {
         if (line.contains(":=")) {
-            System.out.println("ass : "+line);
             handleAssignment(line);
         } else if (line.contains(".")) {
-            System.out.println("call: "+line);
             handleMethodCall(line);
         }
     }
@@ -104,24 +104,32 @@ public class TestAuto {
         String[] parts = line.split("\\.");
         String varName = parts[0].trim();
         String methodCall = parts[1].trim();
-
-        System.out.println("call0: "+methodCall);
-        SatteliteModel objSat = sattelites.get(varName);
-        BaliseModel objBal =  balises.get(varName);
-        System.out.println("call1: "+objBal);
-        System.out.println("call2: "+objSat);
-        if (objSat != null && methodCall.equals("start();")) {
-
+        SatteliteModel objSat = LMsattelites.get(varName);
+        BaliseModel objBal =  LMbalises.get(varName);
+        if (objSat != null && methodCall.contains("start")) {
             SatteliteView satv = new SatteliteView(objSat);
-            startedS.add(satv);
+            LVsattelites.put(varName,satv);
             topContainer.add(satv);
-            System.out.println("call3: "+satv);
-            System.out.println("call4: "+startedS);
-        } else if (objBal != null && methodCall.equals("start();")) {
+        } else if (objBal != null && methodCall.contains("start")) {
             BaliseView balv = new BaliseView(objBal);
-            startedB.add(balv);
+            LVbalises.put(varName,balv);
             bottomContainer.add(balv);
-            System.out.println("call5: "+startedB);
+        }
+        if(objSat != null && methodCall.contains("stop")){
+            topContainer.remove(LVsattelites.get(varName));
+            LVsattelites.remove(varName);
+        } else if (objBal != null && methodCall.contains("stop")) {
+            bottomContainer.remove(LVbalises.get(varName));
+            LVbalises.remove(varName);
+        }
+        if (objSat != null && methodCall.contains("delete")) {
+            topContainer.remove(LVsattelites.get(varName));
+            LMsattelites.remove(varName);
+            LVsattelites.remove(varName);
+        } else if (objBal != null && methodCall.contains("delete")) {
+            LMbalises.remove(varName);
+            LVbalises.remove(varName);
+            bottomContainer.remove(LVbalises.get(varName));
         }
     }
 
@@ -130,23 +138,18 @@ public class TestAuto {
         String[] parts = line.split(":=");
         String varName = parts[0].trim();
         String objectCreation = parts[1].trim();
-        System.out.println("ass1 : " +objectCreation );
         if (objectCreation.startsWith("new")) {
             String className = objectCreation.split(" ")[1];
-            System.out.println("ass2 : " + className);
-            if(className.equals("Satellite")){
-
+            if(className.contains("Satellite")){
                 String params = objectCreation.substring(objectCreation.indexOf("(") + 1, objectCreation.indexOf(")"));
                 SatteliteModel sat = new SatteliteModel(Integer.valueOf(params.split(",")[0]), Integer.valueOf(params.split(",")[1]));
                 sat.configureToMoveToRight();
-                sattelites.put(varName,sat);
-                System.out.println("ass3 : "+sattelites);
+                LMsattelites.put(varName,sat);
             }
-            if(className.equals("Balise")){
+            if(className.contains("Balise")){
                 String params = objectCreation.substring(objectCreation.indexOf("(") + 1, objectCreation.indexOf(")"));
                BaliseModel bal = new BaliseModel(Integer.valueOf(params.split(",")[0]), Integer.valueOf(params.split(",")[1]), 0, 400, 200);
-               balises.put(varName,bal);
-                System.out.println("ass3 : "+balises);
+               LMbalises.put(varName,bal);
             }
         }
     }
