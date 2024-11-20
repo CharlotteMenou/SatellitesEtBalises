@@ -7,7 +7,6 @@ import nicellipse.testsaltelite.balises.BaliseView;
 import nicellipse.testsaltelite.sattelite.SatteliteModel;
 import nicellipse.testsaltelite.sattelite.SatteliteView;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;

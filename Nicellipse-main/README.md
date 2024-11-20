@@ -6,13 +6,13 @@
 
 Pour créer un nouveau satellite :
 ```
-bal := new Satellite(x,y)
+sat := new Satellite(x,y)
 ```
 Où `x` et `y` sont les coordonnées de position initiales du satellite.
 
 Pour créer une nouvelle balise :
 ```
-sat := new Balise(x,y)
+bal := new Balise(x,y)
 ```
 Où `x` et `y` sont les coordonnées de position initiales de la balise.
 
