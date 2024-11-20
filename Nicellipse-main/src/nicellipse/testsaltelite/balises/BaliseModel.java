@@ -23,6 +23,12 @@ public class BaliseModel {
     private boolean movingRight = true;
     private boolean movingDown = true;
     private double currentAngle = 0.0;
+
+
+    public void setTypeMove(int moveType) {
+        this.moveType = moveType;
+    }
+
     private int moveType; // 0 = horizontal, 1 = vertical, 2 = zigzag
     private int amplitudeMouvement ;
     private int range = 0;
@@ -96,10 +102,8 @@ public class BaliseModel {
         } else {
             if (!this.isGivingGarbage && !isReturningToPosition) {
                 moveToSurface();
-                System.out.println("Balise isfree ? on move to surface " + this.isFree);
             } else if (this.isGivingGarbage && !isReturningToPosition) {
                 consumeGarbage();
-                System.out.println("Balise isfree ? on consume garbage " + this.isFree);
             } else if (garbage == 0 ) {
                 backToRandomPosition();
             } else {
@@ -137,18 +141,14 @@ public class BaliseModel {
 
 
     private void consumeGarbage() {
-        System.out.println("Consume Garbage");
         // if i am free i wait to be connected to a sattelite
         if (this.isFree) {
-            System.out.println("I am free");
             return;
         }
         if (this.garbage > 0) {
-            System.out.println("My garbage is being consumed");
             this.garbage = 0; // Consommer les déchets
             this.isReturningToPosition = false;
         } else {
-            System.out.println(" Next step ");
             this.isGivingGarbage = false;
             this.isReturningToPosition = true; // Activer le retour à la position
         }

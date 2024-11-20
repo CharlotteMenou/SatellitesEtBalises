@@ -7,8 +7,8 @@ import nicellipse.testsaltelite.balises.BaliseView;
 import nicellipse.testsaltelite.sattelite.SatteliteModel;
 import nicellipse.testsaltelite.sattelite.SatteliteView;
 
-import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -61,7 +61,7 @@ public class TestAuto {
                     public void run() {
                         for (SatteliteModel sat : LMsattelites.values()) {
                             if(sat != null){
-                                sat.moveBy(2);
+                                sat.moveBy(1);
                             }
                         }
                         for (BaliseModel bal : LMbalises.values()) {
@@ -106,14 +106,34 @@ public class TestAuto {
         String methodCall = parts[1].trim();
         SatteliteModel objSat = LMsattelites.get(varName);
         BaliseModel objBal =  LMbalises.get(varName);
+
+        if (objBal != null && methodCall.startsWith("changeDeplacement")) {
+            // Extraire le type de déplacement entre les parenthèses
+            String deplacement = methodCall.substring(methodCall.indexOf("(") + 2, methodCall.lastIndexOf(")") - 1);
+            switch (deplacement.toLowerCase()) {
+                case "hor":
+                    objBal.setTypeMove(0); // 0 pour déplacement horizontal
+                    break;
+                case "vert":
+                    objBal.setTypeMove(1); // 1 pour déplacement vertical
+                    break;
+                case "sin":
+                    objBal.setTypeMove(2); // 2 pour déplacement diagonal
+                    break;
+            }
+            return;
+        }
+
         if (objSat != null && methodCall.contains("start")) {
             SatteliteView satv = new SatteliteView(objSat);
             LVsattelites.put(varName,satv);
             topContainer.add(satv);
+            register(satv);
         } else if (objBal != null && methodCall.contains("start")) {
             BaliseView balv = new BaliseView(objBal);
             LVbalises.put(varName,balv);
             bottomContainer.add(balv);
+            register(objBal);
         }
         if(objSat != null && methodCall.contains("stop")){
             topContainer.remove(LVsattelites.get(varName));
@@ -152,5 +172,23 @@ public class TestAuto {
                LMbalises.put(varName,bal);
             }
         }
+    }
+
+    public static void register(SatteliteView sattelite){
+
+        sattelite.registerAll(new java.util.ArrayList<BaliseModel>() {
+            {
+                LMbalises.forEach((key, balise) ->
+                        add(balise)  );
+            }
+        });
+    }
+
+    public static void register(BaliseModel balise) {
+        LVsattelites.forEach((key, satellite) -> {
+            satellite.registerAll(new ArrayList<>() {{
+                add(balise);
+            }});
+        });
     }
 }
