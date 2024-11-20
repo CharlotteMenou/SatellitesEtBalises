@@ -38,9 +38,9 @@ public class BaliseModel {
         this.announcer = new Announcer();
         this.random = new Random();
         this.moveType = random.nextInt(3); // Type de mouvement fixé une fois : 0: Horizontal, 1: Vertical, 2: Zigzag
+        this.garbageLimit = random.nextInt(400, 500); // Limite de mémoire aléatoire entre 450 et 500
         this.amplitudeMouvement = random.nextInt(50);
 
-        this.garbageLimit = random.nextInt(100, 150); // Limite de mémoire aléatoire entre 450 et 500
     }
 
     void register(Object o) {

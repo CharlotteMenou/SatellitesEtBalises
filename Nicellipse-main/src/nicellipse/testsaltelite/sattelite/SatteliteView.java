@@ -1,13 +1,16 @@
 package nicellipse.testsaltelite.sattelite;
 
-import nicellipse.component.NiRectangle;
+import nicellipse.component.NiImage;
 import nicellipse.testsaltelite.balises.BaliseModel;
 import nicellipse.testsaltelite.balises.ListenToSatteliteEvent;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
-public class SatteliteView extends NiRectangle {
+public class SatteliteView extends NiImage {
     private static final long serialVersionUID = -8719870900105867735L;
     Integer handCheckCount;
     Color color;
@@ -15,15 +18,17 @@ public class SatteliteView extends NiRectangle {
     private BaliseModel balise;
     private ArrayList<BaliseModel> balises = new ArrayList<>();
     private boolean isConnected = false;
-    // dont move attribute
+    // images attributes
+    private BufferedImage rawImage1;
+    private BufferedImage rawImage2;
 
-    public SatteliteView(SatteliteModel model) {
-        this.color = Color.red;
+    public SatteliteView(SatteliteModel model, File filePath, BufferedImage rawImage1, BufferedImage rawImage2) throws IOException {
+        super(filePath);
+        this.rawImage1 = rawImage1;
+        this.rawImage2 = rawImage2;
         this.handCheckCount = 0;
         this.model = model;
         this.model.register(this);
-        this.setBackground(color);
-        this.setSize(new Dimension(20, 20));
         this.setLocation(model.getX(), model.getY());
     }
 
@@ -44,16 +49,21 @@ public class SatteliteView extends NiRectangle {
         if (this.balise != null) {
            // check the position of the balise if is on range
             if (this.getLocation().x >= balise.getX() - 10 && this.getLocation().x <= balise.getX() + 10) {
-                this.setBackground(Color.black);
+                this.setImage(rawImage2);
+                this.repaint();
             } else {
                 this.balise.setFree(true);
                 this.balise = null;
                 this.isConnected = false; // set to false
-                this.setBackground(Color.red);
+                this.setImage(rawImage1);
+                // check size
+                System.out.println("Size of this : " + this.getSize());
+                this.repaint();
             }
         } else {
             this.isConnected = false; // set to false
-            this.setBackground(Color.red);
+            this.setImage(rawImage1);
+            this.repaint();
         }
         this.repaint();
 
@@ -73,20 +83,20 @@ public class SatteliteView extends NiRectangle {
                         // set not free
                         balise.setFree(false);
                         // set background to black
-                        this.setBackground(Color.black);
+                        this.setImage(rawImage2);
                         this.repaint();
                     } else {
                         this.isConnected = false;
                         this.balise.setFree(true);
                         this.balise = null;
-                        this.setBackground(Color.red);
+                        this.setImage(rawImage1);
                         this.repaint();
                     }
                 } else {
                     this.isConnected = false;
                     this.balise.setFree(true);
                     this.balise = null;
-                    this.setBackground(Color.red);
+                    this.setImage(rawImage1);
                     this.repaint();
                 }
             }
