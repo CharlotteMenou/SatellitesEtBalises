@@ -16,14 +16,15 @@ public class BaliseModel {
     private final Announcer announcer;
     // Random
     private final Random random;
-    // Type de mouvement
-    private int moveType; // 0 = horizontal, 1 = vertical, 2 = zigzag
     // gestion de la mémoire
     private final int garbageLimit;
     private boolean isGivingGarbage = false;
     // Variables de mouvement
     private boolean movingRight = true;
     private boolean movingDown = true;
+    private double currentAngle = 0.0;
+    private int moveType; // 0 = horizontal, 1 = vertical, 2 = zigzag
+    private int amplitudeMouvement ;
     private int range = 0;
     private boolean isFree = true;
     private boolean isOnTop = false ;
@@ -38,6 +39,8 @@ public class BaliseModel {
         this.random = new Random();
         this.moveType = random.nextInt(3); // Type de mouvement fixé une fois : 0: Horizontal, 1: Vertical, 2: Zigzag
         this.garbageLimit = random.nextInt(400, 500); // Limite de mémoire aléatoire entre 450 et 500
+        this.amplitudeMouvement = random.nextInt(50);
+
     }
 
     void register(Object o) {
@@ -220,11 +223,12 @@ public class BaliseModel {
             this.x -= 1; // Avance vers la gauche
         }
 
-        // Ajuster l'angle pour des pointes plus nettes
-        double angle = (double) this.x / 10;  // Augmenter la fréquence (réduire la longueur d'onde)
+        // Incrément de l'angle pour la progression continue de la sinusoïde
+        currentAngle += 0.1;  // Ajustez l'incrément pour contrôler la vitesse de l'oscillation verticale
 
-        // Réduire l'amplitude pour des courbes moins hautes
-        this.y = (int) ((double) maxHeight / 2 + 10 * Math.signum(Math.sin(angle))); // 10 est l'amplitude avec des pointes plus nettes
+
+        // Calcul de la position en Y en utilisant une sinusoïde continue
+        this.y = (int) (maxHeight / 2 + amplitudeMouvement * Math.sin(currentAngle)); // 10 est l'amplitude
 
         // Inverser la direction horizontale uniquement si on atteint les bords horizontaux
         if (this.x >= this.maxWidth - 20 || this.x <= 0) {
@@ -233,6 +237,4 @@ public class BaliseModel {
         // collect garbage
         collectGarbage();
     }
-
-
 }
