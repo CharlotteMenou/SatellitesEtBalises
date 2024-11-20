@@ -30,6 +30,13 @@ Pour arrêter un objet (satellite ou balise) :
 ```
 Exemple : `bal.stop()` ou `sat.stop()`
 
+### Changement type déplacement
+```
+bal.changeDeplacement("hor")
+bal.changeDeplacement("vert")
+bal.changeDeplacement("sin")
+```
+
 
 ## Notes
 - Les commandes doivent être entrées une à la fois

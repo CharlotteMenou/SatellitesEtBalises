@@ -107,6 +107,24 @@ public class TestAuto {
         String methodCall = parts[1].trim();
         SatteliteModel objSat = LMsattelites.get(varName);
         BaliseModel objBal =  LMbalises.get(varName);
+
+        if (objBal != null && methodCall.startsWith("changeDeplacement")) {
+            // Extraire le type de déplacement entre les parenthèses
+            String deplacement = methodCall.substring(methodCall.indexOf("(") + 2, methodCall.lastIndexOf(")") - 1);
+            switch (deplacement.toLowerCase()) {
+                case "hor":
+                    objBal.setTypeMove(0); // 0 pour déplacement horizontal
+                    break;
+                case "vert":
+                    objBal.setTypeMove(1); // 1 pour déplacement vertical
+                    break;
+                case "sin":
+                    objBal.setTypeMove(2); // 2 pour déplacement diagonal
+                    break;
+            }
+            return;
+        }
+
         if (objSat != null && methodCall.contains("start")) {
             SatteliteView satv = new SatteliteView(objSat);
             LVsattelites.put(varName,satv);

@@ -23,6 +23,12 @@ public class BaliseModel {
     private boolean movingRight = true;
     private boolean movingDown = true;
     private double currentAngle = 0.0;
+
+
+    public void setTypeMove(int moveType) {
+        this.moveType = moveType;
+    }
+
     private int moveType; // 0 = horizontal, 1 = vertical, 2 = zigzag
     private int amplitudeMouvement ;
     private int range = 0;
