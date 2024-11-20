@@ -1,22 +1,36 @@
 package nicellipse.testsaltelite.balises;
 
 import java.util.Random;
+
 import nicellipse.testsaltelite.announcer.Announcer;
 
 public class BaliseModel {
 
+    // propriétés du model
     private int x;
     private int y;
     private int garbage;
-    private int maxWidth;
-    private int maxHeight;
-    private Announcer announcer;
+    private final int maxWidth;
+    private final int maxHeight;
+    // Announcer
+    private final Announcer announcer;
+    // Random
+    private final Random random;
+    // Type de mouvement
+    private int moveType; // 0 = horizontal, 1 = vertical, 2 = zigzag
+    // gestion de la mémoire
+    private final int garbageLimit;
+    private boolean isGivingGarbage = false;
+    // Variables de mouvement
     private boolean movingRight = true;
     private boolean movingDown = true;
     private Random random;
     private double currentAngle = 0.0;
     private int moveType; // 0 = horizontal, 1 = vertical, 2 = zigzag
     private int amplitudeMouvement ;
+    private int range = 0;
+    private boolean isFree = true;
+    private boolean isOnTop = false ;
 
     public BaliseModel(int x, int y, int garbage, int maxWidth, int maxHeight) {
         this.x = x;
@@ -28,11 +42,19 @@ public class BaliseModel {
         this.random = new Random();
         this.moveType = random.nextInt(3); // Type de mouvement fixé une fois : 0: Horizontal, 1: Vertical, 2: Zigzag
         this.amplitudeMouvement = random.nextInt(50);
+
+        this.garbageLimit = random.nextInt(100, 150); // Limite de mémoire aléatoire entre 450 et 500
     }
 
     void register(Object o) {
         this.announcer.register(o, MoveBaliseEvent.class);
     }
+
+    // add the register method
+    public void registerSattelite(Object o) {
+        this.announcer.register(o, ListenToSatteliteEvent.class);
+    }
+
 
     public int getX() {
         return this.x;
@@ -42,12 +64,26 @@ public class BaliseModel {
         return this.y;
     }
 
-    public void collectGarbage() {
-        this.garbage += 1;
+    public boolean isFree() {
+        return this.isFree;
     }
 
+    public void setFree(boolean isFree) {
+        this.isFree = isFree;
+    }
+    public boolean isOnTop() {
+        return this.isOnTop;
+    }
+
+    public void collectGarbage() {
+        // add a random number between 0 and 2 to garbage
+        this.garbage += random.nextInt(3);
+    }
+    //
+    private boolean isReturningToPosition = false;
+
     public void move() {
-        if (this.garbage < 100) {
+        if (this.garbage < this.garbageLimit && this.y > 0 && !this.isGivingGarbage && !isReturningToPosition) {
             // Exécuter le type de mouvement fixé
             switch (this.moveType) {
                 case 0:
@@ -61,13 +97,86 @@ public class BaliseModel {
                     break;
             }
         } else {
-            // Mouvement vers la surface (y = 0) si la mémoire est pleine
-            moveToSurface();
+            if (!this.isGivingGarbage && !isReturningToPosition) {
+                moveToSurface();
+                System.out.println("Balise isfree ? on move to surface " + this.isFree);
+            } else if (this.isGivingGarbage && !isReturningToPosition) {
+                consumeGarbage();
+                System.out.println("Balise isfree ? on consume garbage " + this.isFree);
+            } else if (garbage == 0 ) {
+                backToRandomPosition();
+            } else {
+                System.out.println("Not supposed to be here");
+            }
         }
 
         // Notifier l'annonceur de l'événement de mouvement
         this.announcer.announce(new MoveBaliseEvent(this));
+        // announce the movement to sattelites
+        this.announcer.announce(new ListenToSatteliteEvent(this));
     }
+
+    private void moveToSurface() {
+        if (this.y > 0) {
+            this.y -= 1;
+            this.isGivingGarbage = false;
+        } else {
+            isReturningToPosition = false;
+            this.isOnTop = true;
+            // Initialiser range dès que la balise atteint la surface
+            if (this.range == 0) {
+                defineRange();
+            }
+        }
+    }
+
+    private void defineRange() {
+        this.range = 600;  // Définir une plage aléatoire entre 100 et 150
+        //System.out.println("New range :" + this.range);
+        this.isGivingGarbage = true;
+        this.isReturningToPosition = false;
+
+    }
+
+
+    private void consumeGarbage() {
+        System.out.println("Consume Garbage");
+        // if i am free i wait to be connected to a sattelite
+        if (this.isFree) {
+            System.out.println("I am free");
+            return;
+        }
+        if (this.garbage > 0) {
+            System.out.println("My garbage is being consumed");
+            this.garbage = 0; // Consommer les déchets
+            this.isReturningToPosition = false;
+        } else {
+            System.out.println(" Next step ");
+            this.isGivingGarbage = false;
+            this.isReturningToPosition = true; // Activer le retour à la position
+        }
+    }
+
+    private void backToRandomPosition() {
+        //System.out.println("backToRandomPosition");
+
+        //System.out.println("New this.range  "+ this.range);
+        if (this.range > 0 && isReturningToPosition) {
+            this.range -= 10;
+            //System.out.println("New this.range  "+ this.range);
+            if (this.range % 2 == 0) {
+                this.y += 1;
+                this.isOnTop = false;
+                //System.out.println("New y "+ this.y);
+            }
+        } else {
+            // Réinitialiser les paramètres de mouvement
+            isReturningToPosition = false;
+            this.moveType = random.nextInt(3); // Changer le type de mouvement après le retour
+            //System.out.println("New random position: " + this.y);
+        }
+    }
+
 
     private void moveHorizontal() {
         if (movingRight) {
@@ -85,6 +194,8 @@ public class BaliseModel {
                 this.x += 1;
             }
         }
+        // collect garbage
+        collectGarbage();
     }
 
     private void moveVertical() {
@@ -103,6 +214,8 @@ public class BaliseModel {
                 this.y += 1;
             }
         }
+        // collect garbage
+        collectGarbage();
     }
 
     private void moveZigzag() {
@@ -116,6 +229,7 @@ public class BaliseModel {
         // Incrément de l'angle pour la progression continue de la sinusoïde
         currentAngle += 0.1;  // Ajustez l'incrément pour contrôler la vitesse de l'oscillation verticale
 
+
         // Calcul de la position en Y en utilisant une sinusoïde continue
         this.y = (int) (maxHeight / 2 + amplitudeMouvement * Math.sin(currentAngle)); // 10 est l'amplitude
 
@@ -123,12 +237,7 @@ public class BaliseModel {
         if (this.x >= this.maxWidth - 20 || this.x <= 0) {
             movingRight = !movingRight;
         }
-    }
-
-    private void moveToSurface() {
-        // Mouvement vers y = 0 lorsque la mémoire est pleine
-        if (this.y > 0) {
-            this.y -= 1;
-        }
+        // collect garbage
+        collectGarbage();
     }
 }

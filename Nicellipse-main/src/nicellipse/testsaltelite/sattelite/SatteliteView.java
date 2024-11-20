@@ -1,25 +1,25 @@
 package nicellipse.testsaltelite.sattelite;
 
 import nicellipse.component.NiRectangle;
-import nicellipse.testsaltelite.*;
-import nicellipse.testsaltelite.announcer.AbstractEvent;
-import nicellipse.testsaltelite.announcer.Announcer;
+import nicellipse.testsaltelite.balises.BaliseModel;
+import nicellipse.testsaltelite.balises.ListenToSatteliteEvent;
 
 import java.awt.*;
+import java.util.ArrayList;
 
-public class SatteliteView extends NiRectangle implements MobiListener {
+public class SatteliteView extends NiRectangle {
     private static final long serialVersionUID = -8719870900105867735L;
-    final Integer handCheckGap = 20;
-    final Integer maxHandChecks = 1000;
     Integer handCheckCount;
     Color color;
     private SatteliteModel model;
-    private Announcer announcer;
+    private BaliseModel balise;
+    private ArrayList<BaliseModel> balises = new ArrayList<>();
+    private boolean isConnected = false;
+    // dont move attribute
 
     public SatteliteView(SatteliteModel model) {
         this.color = Color.red;
         this.handCheckCount = 0;
-        this.announcer = new Announcer();
         this.model = model;
         this.model.register(this);
         this.setBackground(color);
@@ -27,50 +27,69 @@ public class SatteliteView extends NiRectangle implements MobiListener {
         this.setLocation(model.getX(), model.getY());
     }
 
-    public void registerForHandCheck(MobiView v) {
-        this.announcer.register(v, MobiHandCheckRequestEvent.class);
-    }
+    // add the register method
+    public void registerAll(ArrayList<BaliseModel> balises) {
 
-    private void unregister(SatteliteView satteliteView, Class<? extends AbstractEvent> cls) {
-        this.announcer.unregister(satteliteView, cls);
-
-    }
-
-    @Override
-    public void mobiMoveEvent(MobiMoveEvent evt) {
-        SatteliteModel src = (SatteliteModel) evt.getSource();
-
-        int x = src.getX();
-        if (x > 0) {
-            this.setLocation((x % this.getParent().getWidth()), src.getY());
-        } else {
-            this.setLocation(this.getParent().getWidth() - (Math.abs(x) % this.getParent().getWidth()), src.getY());
+        for (BaliseModel balise : balises) {
+            this.balises.add(balise);
+            balise.registerSattelite(this);
         }
-        this.announcer.announce(new MobiHandCheckRequestEvent(this));
     }
 
-    @Override
-    public void mobiHandCheckRequestEvent(MobiHandCheckRequestEvent evt) {
-        /*SatteliteView mv = (SatteliteView) evt.getSource();
-        if ((this.getLocation().x >= (mv.getLocation().x - handCheckGap)
-                && (this.getLocation().x <= (mv.getLocation().x + this.getWidth() + handCheckGap)))) {
-            this.handCheckCount++;
-            if (this.handCheckCount > this.maxHandChecks) {
-                mv.unregister(this, MobiHandCheckRequestEvent.class);
-                mv.setBackground(Color.black);
-            } else {
-                this.setBackground(Color.yellow);
-                mv.setBackground(Color.yellow);
-            }
-        } else {
-            this.setBackground(this.color);
-            mv.setBackground(this.color);
-        }*/
-    }
-    
     public void onSatteliteMove(SatteliteMoveEvent event) {
         SatteliteModel model = (SatteliteModel) event.getSource();
-        this.setLocation(model.getX(), model.getY());
+        // set location of satteliteview : if x is out of range of parent, go back to 0
+        int x = model.getX() % 400;
+        this.setLocation(x, this.getY());
+        if (this.balise != null) {
+           // check the position of the balise if is on range
+            if (this.getLocation().x >= balise.getX() - 10 && this.getLocation().x <= balise.getX() + 10) {
+                this.setBackground(Color.black);
+            } else {
+                this.balise.setFree(true);
+                this.balise = null;
+                this.isConnected = false; // set to false
+                this.setBackground(Color.red);
+            }
+        } else {
+            this.isConnected = false; // set to false
+            this.setBackground(Color.red);
+        }
         this.repaint();
+
+    }
+
+    public void onSatteliteStop(ListenToSatteliteEvent event) {
+        BaliseModel balise = (BaliseModel) event.getSource();
+        if (this.isConnected) {
+            // already connected
+        } else {
+            if (balise.isFree()) {
+                this.balise = balise;
+                this.isConnected = true;
+                // if the sattelite coordinates are in the same range of balise coordinates
+                if (balise.isOnTop()) {
+                    if (this.getLocation().x >= balise.getX() - 10 && this.getLocation().x <= balise.getX() + 10) {
+                        // set not free
+                        balise.setFree(false);
+                        // set background to black
+                        this.setBackground(Color.black);
+                        this.repaint();
+                    } else {
+                        this.isConnected = false;
+                        this.balise.setFree(true);
+                        this.balise = null;
+                        this.setBackground(Color.red);
+                        this.repaint();
+                    }
+                } else {
+                    this.isConnected = false;
+                    this.balise.setFree(true);
+                    this.balise = null;
+                    this.setBackground(Color.red);
+                    this.repaint();
+                }
+            }
+        }
     }
 }
