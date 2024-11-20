@@ -1,6 +1,5 @@
 package nicellipse.testsaltelite.sattelite;
 
-import nicellipse.testsaltelite.MobiMoveEvent;
 import nicellipse.testsaltelite.announcer.Announcer;
 
 public class SatteliteModel {
