@@ -18,11 +18,11 @@ public class SatteliteModel {
     void moveTo(int x, int y) {
         this.x = x;
         this.y = y;
-        this.announcer.announce(new MobiMoveEvent(this));
+
     }
 
     void register(Object o) {
-        this.announcer.register(o, MobiMoveEvent.class);
+        this.announcer.register(o, SatteliteMoveEvent.class);
     }
 
     public int getX() {
@@ -43,5 +43,6 @@ public class SatteliteModel {
 
     public void moveBy(int gap) {
         this.moveTo(this.x + (dir * gap), this.y);
+        this.announcer.announce(new SatteliteMoveEvent(this));
     }
 }
