@@ -7,14 +7,67 @@ import nicellipse.testsaltelite.balises.BaliseView;
 import nicellipse.testsaltelite.sattelite.SatteliteModel;
 import nicellipse.testsaltelite.sattelite.SatteliteView;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import static nicellipse.testsaltelite.Main.launch;
 
 public class TestAuto {
+
+    // Load the file Sattelite.png and create a new File object
+
+    static File baliseImage1 = new File("Balise.png");
+    static File satteliteImage1 = new File("Sattelite.png");
+    static File satteliteImage2 = new File("Sattelite1.png");
+
+        static BufferedImage rawBalise1;
+
+    static {
+        try {
+            rawBalise1 = ImageIO.read(baliseImage1);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static BufferedImage rawBalise2;
+
+    static {
+        try {
+            rawBalise2 = ImageIO.read(baliseImage1);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static BufferedImage rawSattelite1;
+
+    static {
+        try {
+            rawSattelite1 = ImageIO.read(satteliteImage1);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static BufferedImage rawSattelite2;
+
+    static {
+        try {
+            rawSattelite2 = ImageIO.read(satteliteImage2);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    // transform into buffered images
+
 
     static HashMap<String,BaliseModel> LMbalises;
     static HashMap<String,SatteliteModel> LMsattelites;
@@ -29,7 +82,10 @@ public class TestAuto {
     // Partie bleue
     static NiRectangle bottomContainer = new NiRectangle();
 
-    public static void main(String[] args) {
+    public TestAuto() throws IOException {
+    }
+
+    public static void main(String[] args) throws IOException {
 
         topContainer.setBackground(Color.white);
         topContainer.setSize(new Dimension(400, 200));
@@ -92,7 +148,7 @@ public class TestAuto {
     }
 
     // Méthode pour interpréter la ligne d'entrée du terminal
-    public static void interpret(String line) {
+    public static void interpret(String line) throws IOException {
         if (line.contains(":=")) {
             handleAssignment(line);
         } else if (line.contains(".")) {
@@ -100,7 +156,7 @@ public class TestAuto {
         }
     }
 
-    public static void handleMethodCall(String line) {
+    public static void handleMethodCall(String line) throws IOException {
         String[] parts = line.split("\\.");
         String varName = parts[0].trim();
         String methodCall = parts[1].trim();
@@ -125,12 +181,12 @@ public class TestAuto {
         }
 
         if (objSat != null && methodCall.contains("start")) {
-            SatteliteView satv = new SatteliteView(objSat);
+            SatteliteView satv = new SatteliteView(objSat,satteliteImage1, rawSattelite1, rawSattelite2);
             LVsattelites.put(varName,satv);
             topContainer.add(satv);
             register(satv);
         } else if (objBal != null && methodCall.contains("start")) {
-            BaliseView balv = new BaliseView(objBal);
+            BaliseView balv = new BaliseView(objBal, baliseImage1, rawBalise1, rawBalise2);
             LVbalises.put(varName,balv);
             bottomContainer.add(balv);
             register(objBal);
@@ -190,5 +246,15 @@ public class TestAuto {
                 add(balise);
             }});
         });
+    }
+
+    public static void launch(Runnable r) {
+        try {
+            SwingUtilities.invokeAndWait(r);
+        } catch (InvocationTargetException e1) {
+            e1.printStackTrace();
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        }
     }
 }

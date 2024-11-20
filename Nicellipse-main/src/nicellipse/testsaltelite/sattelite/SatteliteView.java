@@ -56,8 +56,6 @@ public class SatteliteView extends NiImage {
                 this.balise = null;
                 this.isConnected = false; // set to false
                 this.setImage(rawImage1);
-                // check size
-                System.out.println("Size of this : " + this.getSize());
                 this.repaint();
             }
         } else {
