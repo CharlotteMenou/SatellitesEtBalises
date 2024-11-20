@@ -1,5 +1,6 @@
 package nicellipse.testsaltelite.testbaliseswithsattelites;
 
+import nicellipse.component.NiImage;
 import nicellipse.component.NiRectangle;
 import nicellipse.component.NiSpace;
 import nicellipse.testsaltelite.balises.BaliseModel;
@@ -7,12 +8,30 @@ import nicellipse.testsaltelite.balises.BaliseView;
 import nicellipse.testsaltelite.sattelite.SatteliteModel;
 import nicellipse.testsaltelite.sattelite.SatteliteView;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 public class Test {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+
+        // Load the file Sattelite.png and create a new File object
+
+        File baliseImage1 = new File("Balise.png");
+        File satteliteImage1 = new File("Sattelite.png");
+        File satteliteImage2 = new File("Sattelite1.png");
+
+        // transform into buffered images
+        BufferedImage rawBalise1 = ImageIO.read(baliseImage1);
+        BufferedImage rawBalise2 = ImageIO.read(baliseImage1);
+        BufferedImage rawSattelite1 = ImageIO.read(satteliteImage1);
+        BufferedImage rawSattelite2 = ImageIO.read(satteliteImage2);
+
+
         NiSpace space = new NiSpace("Mobi 1", new Dimension(400, 400));
 
         // Partie blanche
@@ -43,10 +62,10 @@ public class Test {
         BaliseModel baliseModel4 = new BaliseModel((int) (Math.random() * 400), (int) (Math.random() * 200), 0, 400, 200);
 
         // Create balise views and register each to its balise model
-        BaliseView baliseView1 = new BaliseView(baliseModel1);
-        BaliseView baliseView2 = new BaliseView(baliseModel2);
-        BaliseView baliseView3 = new BaliseView(baliseModel3);
-        BaliseView baliseView4 = new BaliseView(baliseModel4);
+        BaliseView baliseView1 = new BaliseView(baliseModel1, baliseImage1, rawBalise1, rawBalise2);
+        BaliseView baliseView2 = new BaliseView(baliseModel2, baliseImage1, rawBalise1, rawBalise2);
+        BaliseView baliseView3 = new BaliseView(baliseModel3, baliseImage1, rawBalise1, rawBalise2);
+        BaliseView baliseView4 = new BaliseView(baliseModel4, baliseImage1, rawBalise1, rawBalise2);
 
         // Add balises to the bottom container
         bottomContainer.add(baliseView1);
@@ -55,9 +74,9 @@ public class Test {
         bottomContainer.add(baliseView4);
 
         // initiate all sattelite views
-        SatteliteView satelliteV1 = new SatteliteView(satellite1);
-        SatteliteView satelliteV2 = new SatteliteView(satellite2);
-        SatteliteView satelliteV3 = new SatteliteView(satellite3);
+        SatteliteView satelliteV1 = new SatteliteView(satellite1, satteliteImage1, rawSattelite1, rawSattelite2);
+        SatteliteView satelliteV2 = new SatteliteView(satellite2, satteliteImage1, rawSattelite1, rawSattelite2);
+        SatteliteView satelliteV3 = new SatteliteView(satellite3,  satteliteImage1, rawSattelite1, rawSattelite2);
 
         // register all balises to all sattelites
         satelliteV1.registerAll(new java.util.ArrayList<BaliseModel>() {
