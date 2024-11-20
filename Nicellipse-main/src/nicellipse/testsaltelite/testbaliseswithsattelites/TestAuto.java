@@ -9,6 +9,7 @@ import nicellipse.testsaltelite.sattelite.SatteliteView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -61,7 +62,7 @@ public class TestAuto {
                     public void run() {
                         for (SatteliteModel sat : LMsattelites.values()) {
                             if(sat != null){
-                                sat.moveBy(2);
+                                sat.moveBy(1);
                             }
                         }
                         for (BaliseModel bal : LMbalises.values()) {
@@ -110,10 +111,12 @@ public class TestAuto {
             SatteliteView satv = new SatteliteView(objSat);
             LVsattelites.put(varName,satv);
             topContainer.add(satv);
+            register(satv);
         } else if (objBal != null && methodCall.contains("start")) {
             BaliseView balv = new BaliseView(objBal);
             LVbalises.put(varName,balv);
             bottomContainer.add(balv);
+            register(objBal);
         }
         if(objSat != null && methodCall.contains("stop")){
             topContainer.remove(LVsattelites.get(varName));
@@ -152,5 +155,23 @@ public class TestAuto {
                LMbalises.put(varName,bal);
             }
         }
+    }
+
+    public static void register(SatteliteView sattelite){
+
+        sattelite.registerAll(new java.util.ArrayList<BaliseModel>() {
+            {
+                LMbalises.forEach((key, balise) ->
+                        add(balise)  );
+            }
+        });
+    }
+
+    public static void register(BaliseModel balise) {
+        LVsattelites.forEach((key, satellite) -> {
+            satellite.registerAll(new ArrayList<>() {{
+                add(balise);
+            }});
+        });
     }
 }
