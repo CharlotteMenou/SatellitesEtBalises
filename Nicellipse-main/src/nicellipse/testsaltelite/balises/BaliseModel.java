@@ -16,15 +16,12 @@ public class BaliseModel {
     private final Announcer announcer;
     // Random
     private final Random random;
-    // Type de mouvement
-    private int moveType; // 0 = horizontal, 1 = vertical, 2 = zigzag
     // gestion de la mémoire
     private final int garbageLimit;
     private boolean isGivingGarbage = false;
     // Variables de mouvement
     private boolean movingRight = true;
     private boolean movingDown = true;
-    private Random random;
     private double currentAngle = 0.0;
     private int moveType; // 0 = horizontal, 1 = vertical, 2 = zigzag
     private int amplitudeMouvement ;
